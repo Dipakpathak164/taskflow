@@ -1,0 +1,2 @@
+# Static assets folder
+This directory is used for public assets (images, icons, etc.).
