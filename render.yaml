@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: taskflow-backend
+    env: docker
+    dockerContext: ./backend
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: PORT
+        value: "5000"
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+
+  - type: web
+    name: taskflow-frontend
+    env: docker
+    dockerContext: ./frontend
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: taskflow-backend
+          property: url
+
+  - type: worker
+    name: taskflow-notifier
+    env: docker
+    dockerContext: ./notifier
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
