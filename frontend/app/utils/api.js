@@ -1,6 +1,17 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+function getBaseUrl() {
+  if (process.env.NEXT_PUBLIC_API_URL && !process.env.NEXT_PUBLIC_API_URL.includes('localhost')) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (typeof window !== 'undefined' && window.location.hostname.includes('onrender.com')) {
+    return 'https://taskflow-u5jz.onrender.com';
+  }
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+}
+
+const BASE_URL = getBaseUrl();
 
 export async function apiCall(endpoint, options = {}) {
+  const baseUrl = getBaseUrl();
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
   const headers = {
@@ -18,7 +29,7 @@ export async function apiCall(endpoint, options = {}) {
     config.body = JSON.stringify(options.body);
   }
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, config);
+  const response = await fetch(`${baseUrl}${endpoint}`, config);
 
   if (response.status === 401) {
     if (typeof window !== 'undefined') {
